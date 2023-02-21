@@ -533,6 +533,69 @@ struct ScenarioConfig {
   Real systemOmega = 2 * PI * systemFrequency;
 };
 } // namespace SGIB
+        // Further parameters
+        Real systemOmega = 2 * PI * systemFrequency;
+    };
+    struct Yazdani {
+        Real systemFrequency = 60;
+        Real systemNominalVoltage = 1500; //unnecessary
+
+        // Line parameters (R/X = 1)
+        Real length = 5;
+        Real lineResistance = 0.5 * length;
+	    Real lineInductance = 0.5/314 * length;
+        Real lineCapacitance = 50e-6/314 * length; 
+
+        // Initial state values
+        Real thetaPLLInit = 0; 
+        Real phiPLLInit = 0; 
+        Real phi_dInit = 0;
+        Real phi_qInit = 0;
+        Real gamma_dInit = 0;
+        Real gamma_qInit = 0;
+
+        // Nominal generated power values of VSI
+        Real pvNominalVoltage = 400;
+        Real pvNominalActivePower = 1e5; //unnecessary
+        Real pvNominalReactivePower = 0; //unnecessary
+        Real Vdref = sqrt(3. / 2.)* 400; //work with Amplitude (*sqrt(3/2))
+        Real Vqref = 0;
+        Real OmegaNull = 2*M_PI*60; //System circular frequency
+
+        // VSI filter parameters + additional resistor
+        Real Lf = 100e-6;
+        Real Cf = 2.5e-3;
+        Real Rf = 2.07e-3; //2.07e-3  
+        Real tau = 0.5e-3;
+
+        Real Rc = 1e-5; //connecting resistor to external network
+      
+
+       // VSI controller parameters TODO
+        Real scaling_P = 1; //todo
+        Real scaling_I = 1; //todo
+
+        Real KpVoltageCtrl = 1.6725*scaling_P; //1.6725
+        Real KiVoltageCtrl = 374.64*scaling_I; //374.64
+        Real KpCurrCtrl = 0.2*scaling_P; //1.3
+        Real KiCurrCtrl = 4.14*scaling_I; //(R+Ron)/tau
+        Real KpPLL = 0*scaling_P; //0.25
+        Real KiPLL = 0*scaling_I; //2
+        Real OmegaCutoff = 2*M_PI*60; //669
+
+        // Further parameters
+        Real systemOmega = 2 * PI * systemFrequency;
+
+        //Load Parameters
+        Real Res1 = 83e-3;
+        Real Ind1 = 137e-6;
+        Real Res2 = 50e-3;
+        Real Ind2 = 68e-6;
+        Real Cap2 = 13.55e-3;
+    };
+
+
+}
 
 namespace CIGREMV {
 
