@@ -35,10 +35,10 @@ set(CIRCUIT_SOURCES
 	Circuits/EMT_PiLine.cpp
 	Circuits/EMT_Ph3_R3C1L1CS1_RC_vs_SSN.cpp
 	Circuits/EMT_Ph3_RLC1VS1_RC_vs_SSN.cpp
+	
+	# EMT examples with PF initialization
 	Circuits/EMT_Slack_PiLine_VSI_VoltageControlled_SteadyState_with_PF_Init.cpp
 	Circuits/EMT_Slack_PiLine_VSI_VoltageControlled_LoadStep_with_PF_Init.cpp
-
-	# EMT examples with PF initialization
 	Circuits/EMT_Slack_PiLine_PQLoad_with_PF_Init.cpp
 	Circuits/EMT_Slack_PiLine_VSI_with_PF_Init.cpp
 	Circuits/EMT_Slack_PiLine_VSI_Ramp_with_PF_Init.cpp
