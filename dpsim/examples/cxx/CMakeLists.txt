@@ -132,12 +132,15 @@ list(APPEND TEST_SOURCES
 	Circuits/EMT_SynGenVBR_OperationalParams_SMIB_Fault.cpp
 	Circuits/EMT_SynGenVBR_SMIB_Fault.cpp
 	Circuits/EMT_SynGenDQ7odTrapez_SMIB_Fault.cpp
+	Circuits/EMT_DP_SP_Slack_PiLine_PQLoad_FrequencyRamp_CosineFM.cpp	
 	Circuits/EMT_Slack_PiLine_VSI_Ramp_with_PF_Init.cpp
 	Circuits/EMT_DP_SP_Slack_PiLine_PQLoad_FrequencyRamp_CosineFM.cpp
 	Circuits/DP_SMIB_ReducedOrderSG_LoadStep.cpp
 	Circuits/DP_SMIB_ReducedOrderSGIterative_LoadStep.cpp
 	Circuits/EMT_Ph3_R3C1L1CS1_RC_vs_SSN.cpp
 	Circuits/EMT_Ph3_RLC1VS1_RC_vs_SSN.cpp
+	Circuits/EMT_Slack_PiLine_VSI_VoltageControlled_SteadyState_with_PF_Init.cpp
+	Circuits/EMT_Slack_PiLine_VSI_VoltageControlled_LoadStep_with_PF_Init.cpp
 )
 
 if(WITH_SUNDIALS)
