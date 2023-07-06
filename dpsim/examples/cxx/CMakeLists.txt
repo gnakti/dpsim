@@ -39,6 +39,9 @@ set(CIRCUIT_SOURCES
 	# EMT examples with PF initialization
 	Circuits/EMT_Slack_PiLine_VSI_VoltageControlled_SteadyState_with_PF_Init.cpp
 	Circuits/EMT_Slack_PiLine_VSI_VoltageControlled_LoadStep_with_PF_Init.cpp
+	Circuits/DP_Slack_PiLine_VSI_VoltageControlled_SteadyState_with_PF_Init.cpp
+
+	# EMT examples with PF initialization
 	Circuits/EMT_Slack_PiLine_PQLoad_with_PF_Init.cpp
 	Circuits/EMT_Slack_PiLine_VSI_with_PF_Init.cpp
 	Circuits/EMT_Slack_PiLine_VSI_Ramp_with_PF_Init.cpp
@@ -49,6 +52,7 @@ set(CIRCUIT_SOURCES
 	Circuits/SP_Slack_PiLine_VSI_with_PF_Init.cpp
 	Circuits/SP_Slack_PiLine_VSI_Ramp_with_PF_Init.cpp
 	Circuits/SP_Slack_PiLine_PQLoad_with_PF_Init.cpp
+	Circuits/SP_Slack_PiLine_VSI_VoltageControlled_SteadyState_with_PF_Init.cpp
 
 	# Combined EMT/DP/SP examples
 	Circuits/EMT_DP_SP_Slack.cpp
