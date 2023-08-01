@@ -101,7 +101,6 @@
 #include <dpsim-models/EMT/EMT_Ph3_Inductor.h>
 #include <dpsim-models/EMT/EMT_Ph3_ReducedOrderSynchronGeneratorVBR.h>
 #include <dpsim-models/EMT/EMT_Ph3_VSIVoltageControlDQ.h>
-#include <dpsim-models/EMT/EMT_Ph3_VSIVoltageControlVCO.h>
 #include <dpsim-models/EMT/EMT_Ph3_Resistor.h>
 #include <dpsim-models/EMT/EMT_Ph3_SeriesResistor.h>
 #include <dpsim-models/EMT/EMT_Ph3_SeriesSwitch.h>
