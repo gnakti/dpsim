@@ -547,6 +547,8 @@ namespace GridForming {
         // Line
         Real lineResistance = 0.88e-3;
         Real lineInductance = 0;
+        Real lineCapacitance = 0;
+        Real lineConductance = 0;
 
         // Real lineResistance = 1.27e-4 * 529;
         // Real lineInductance = 9.05e-4 * 529;
