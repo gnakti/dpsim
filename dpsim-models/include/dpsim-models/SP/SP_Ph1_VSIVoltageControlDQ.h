@@ -88,11 +88,13 @@ namespace Ph1 {
 		const Attribute<Real>::Ptr mElecActivePower;
 		const Attribute<Real>::Ptr mElecPassivePower;
 		// Control outputs
-		/// Voltage as control output after transformation interface
-		const Attribute<MatrixComp>::Ptr mVsref;
 
-		// Sub voltage source
-		const Attribute<MatrixComp>::Ptr mVs;
+		const Attribute<MatrixComp>::Ptr mIsref;
+
+		///current d-axis in local reference frame
+		const Attribute<Real>::Ptr mIsd;
+		///current q-axis in local reference frame
+		const Attribute<Real>::Ptr mIsq;
 
 		// VCO
 		const Attribute<Real>::Ptr mVCOOutput;

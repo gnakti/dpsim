@@ -124,7 +124,7 @@ int main(int argc, char* argv[]) {
 
 	// Logging
 	auto loggerSP = DataLogger::make(simNameSP);
-    loggerSP->logAttribute("Controlled_source_PV", pv->attribute("Vs"));
+    loggerSP->logAttribute("Controlled_source_PV", pv->attribute("Isref"));
 	loggerSP->logAttribute("Voltage_terminal_PV", n1SP->attribute("v"));
 	loggerSP->logAttribute("Voltage_PCC", n2SP->attribute("v"));
 	loggerSP->logAttribute("Strom_RLC", pv->attribute("i_intf"));
