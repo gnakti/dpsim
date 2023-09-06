@@ -46,6 +46,12 @@ namespace Ph1 {
 		/// Power Controller
 		std::shared_ptr<Signal::VoltageControllerVSI> mVoltageControllerVSI;
 
+		// ### Control parameters
+		Real mKiVoltageCtrl = 0;
+		Real mKiCurrCtrl = 0;
+		Real mKpVoltageCtrl = 0;
+		Real mKpCurrCtrl = 0;
+
 		// ### Electrical Subcomponents ###
 		/// Controlled voltage source
 		std::shared_ptr<SP::Ph1::VoltageSource> mSubCtrledVoltageSource;
@@ -141,6 +147,8 @@ namespace Ph1 {
 		void mnaParentAddPreStepDependencies(AttributeBase::List &prevStepDependencies, AttributeBase::List &attributeDependencies, AttributeBase::List &modifiedAttributes) override;
 		/// Add MNA post step dependencies
 		void mnaParentAddPostStepDependencies(AttributeBase::List &prevStepDependencies, AttributeBase::List &attributeDependencies, AttributeBase::List &modifiedAttributes, Attribute<Matrix>::Ptr &leftVector) override;
+		///
+		void mnaCompApplyRightSideVectorStamp(Matrix& rightVector) override;
 
 		// #### Control section ####
 		/// Control pre step operations
