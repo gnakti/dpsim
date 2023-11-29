@@ -19,15 +19,13 @@ EMT::Ph3::VoltageGain::VoltageGain(String uid, String name, Logger::Level logLev
 
 	// emt before signal always
 
-	mVs(mAttributes->create<Matrix>("Vs", Matrix::Zero(3, 1))), // amplitude sub voltage source
+	mVs(mAttributes->createDynamic<Matrix>("Vs")), // amplitude sub voltage source
 	mElecActivePower(mAttributes->create<Real>("P_elec", 0)),
 	mElecPassivePower(mAttributes->create<Real>("Q_elec", 0)),
 	mVcd(mAttributes->create<Real>("Vc_d", 0)), // d-axis of voltage
 	mVcq(mAttributes->create<Real>("Vc_q", 0)), // q-axis of voltage
-	mVcdq(mAttributes->create<Matrix>("Vcdq", Matrix::Zero(2, 1))),
-
-	mInputVoltage(mAttributes->create<Matrix>("V_input", Matrix::Zero(2, 1))), // input for gain
-	mGainVoltage(mAttributes->create<Matrix>("V_gain", Matrix::Zero(2, 1))), // output of gain
+	mVcdq(mAttributes->create<Matrix>("Vcdq", Matrix::Zero(2, 1))), // dq voltage
+	mGainVoltage(mAttributes->createDynamic<Matrix>("V_gain")), // output of gain
 
 	mGainInputs(mAttributes->createDynamic<Matrix>("voltagectrl_inputs")),
 	mGainOutputs(mAttributes->createDynamic<Matrix>("voltagectrl_outputs")),
@@ -39,11 +37,13 @@ EMT::Ph3::VoltageGain::VoltageGain(String uid, String name, Logger::Level logLev
 	setTerminalNumber(1);
 
 	SPDLOG_LOGGER_INFO(mSLog, "Create {} {}", type(), name);
-	**mIntfVoltage = Matrix::Zero(3, 1);
-	**mIntfCurrent = Matrix::Zero(3, 1);
+
 
 	// Create electrical sub components
 	mSubCtrledVoltageSource = EMT::Ph3::VoltageSource::make(**mName + "_src", mLogLevel);
+
+	// Create control sub components
+	mGain = Signal::Gain::make(**mName + "_Gain", mLogLevel);
 
 	// Pre-step of the subcontrolled voltage source is handled explicitly in mnaParentPreStep
 	addMNASubComponent(mSubCtrledVoltageSource, MNA_SUBCOMP_TASK_ORDER::NO_TASK, MNA_SUBCOMP_TASK_ORDER::TASK_BEFORE_PARENT, true);
@@ -53,27 +53,27 @@ EMT::Ph3::VoltageGain::VoltageGain(String uid, String name, Logger::Level logLev
 	for (auto subcomp: mSubComponents)
 		SPDLOG_LOGGER_INFO(mSLog, "- {}", subcomp->name());
 
-	// Create control sub components
-	mGain = Signal::Gain::make(**mName + "_Gain", mLogLevel);
 
 	// Gain as inputref comes in initializeNodes
-	mGain->mInputRef->setReference(mVs); // input voltage of the gain
-	//mGainVoltage->setReference(mGain->mOutputRef); // output of gain is saved in gain voltage
+	mGain->mInputRef->setReference(mVcdq); // input voltage of the gain
+	mGainVoltage->setReference(mGain->mOutputCurr); // output of gain voltage (dq) is saved
+
 
 	// Sub voltage source
-	// mGainVoltage->setReference(mSubCtrledVoltageSource->mVoltageRef); // output voltage
-	//mSubCtrledVoltageSource->mVoltageRef->setReference(mVs); // controlled source gets value from gain
-	mVs->setReference(mSubCtrledVoltageSource->mIntfVoltage);
+	**mIntfVoltage = Matrix::Zero(3, 1);
+	**mIntfCurrent = Matrix::Zero(3, 1);
 
-	// input, state and output of the gain are saved
+	mVs->setReference(mSubCtrledVoltageSource->mIntfVoltage); // initial voltage is zero
+
+	// input, state and output of the gain are saved for debugging
 	// maybe useless
 	mGainInputs->setReference(mGain->mInputCurr);
 	mGainStates->setReference(mGain->mStateCurr);
 	mGainOutputs->setReference(mGain->mOutputCurr);
 }
 
-//setter goal voltage and frequency
-void EMT::Ph3::VoltageGain::setParameters(Real K_p, Matrix InputVoltage) {
+//setter for gain parameter override function
+void EMT::Ph3::VoltageGain::setParameters(Real K_p) {
 	mParametersSet = true;
 
 	SPDLOG_LOGGER_INFO(mSLog, "General Parameters:");
@@ -81,8 +81,7 @@ void EMT::Ph3::VoltageGain::setParameters(Real K_p, Matrix InputVoltage) {
 
 	mGain->setParameters(K_p);
 
-	**mK_p = K_p;
-	**mInputVoltage = InputVoltage;
+	//mK_p = K_p;
 }
 
 
@@ -109,7 +108,7 @@ void EMT::Ph3::VoltageGain::initializeFromNodesAndTerminals(Real frequency) {
 
 
 	// Set Node 0 voltage
-	mVirtualNodes[0]->setInitialVoltage(intfVoltageComplex); // 3x1 Matrix
+	mVirtualNodes[0]->setInitialVoltage(intfVoltageComplex); // 3x1 Matrix complex
 
 
 	// Calculate Powers
@@ -147,10 +146,14 @@ void EMT::Ph3::VoltageGain::initializeFromNodesAndTerminals(Real frequency) {
 	//**mIrcq = ircdq(1, 0);
 
 	// Gain input settings --> input is voltage in dq-space
-	mGain->mInputRef->setReference(mVcdq);
-	mGain->setInitialValues(**mVcdq, Matrix::Zero(2,1), Matrix::Zero(2,1));
+	Matrix matrixStateInit = Matrix::Zero(2,1);
+	Matrix matrixOutputInit = Matrix::Zero(2,1);
+
+	mGain->mInputRef->setReference(mVcdq); // input of gain is dq-voltage
+	mGain->setInitialValues(**mVcdq, matrixStateInit, matrixOutputInit); // state-space initialization
 
 
+	// logging
 	SPDLOG_LOGGER_INFO(mSLog,
 		"\n--- Initialization from powerflow ---"
 		"\nInterface voltage across: {:s}"

@@ -46,19 +46,25 @@ namespace Ph3 {
 		// ### Inverter Interfacing Variables ###
 
 		// Control inputs
+
+		// sub voltage source (3-phase)
 		const Attribute<Matrix>::Ptr mVs;
+
+		// dq-transformated voltage voltage source with singular components
 		const Attribute<Matrix>::Ptr mVcdq;
-		const Attribute<Real>::Ptr mK_p;
 		const Attribute<Real>::Ptr mVcd;
 		const Attribute<Real>::Ptr mVcq;
+
+		// parameter for gain controller
+		const Attribute<Real>::Ptr mK_p;
+
+		// power attributes
 		const Attribute<Real>::Ptr mElecActivePower;
 		const Attribute<Real>::Ptr mElecPassivePower;
 
 		// Control outputs
 		/// Voltage as control output after transformation interface
-		const Attribute<Matrix>::Ptr mGainOutput;
-		const Attribute<Matrix>::Ptr mGainVoltage;
-		const Attribute<Matrix>::Ptr mInputVoltage;
+		const Attribute<Matrix>::Ptr mGainVoltage; // in dq-frame
 
 		// input, state and output vector for logging
 		const Attribute<Matrix>::Ptr mGainInputs;
@@ -75,7 +81,7 @@ namespace Ph3 {
 		/// Initializes component from power flow data
 		void initializeFromNodesAndTerminals(Real frequency);
 		/// Setter for gengit eral parameters of inverter
-		void setParameters(Real K_p, Matrix InputVoltage);
+		void setParameters(Real K_p);
 
 
 
