@@ -26,26 +26,29 @@ namespace Signal {
 
 		Real mK_p;
 
+
 	public:
 
 		/// This is never explicitely set to reference anything, so the outside code is responsible for setting up the reference.
-		const Attribute<Real>::Ptr mInputRef;
+		const Attribute<Matrix>::Ptr mInputRef;
 		/// Value, which goes to outside classes
-		const Attribute<Real>::Ptr mOutputRef;
+		const Attribute<Matrix>::Ptr mOutputRef;
 
-		
+		const Attribute<Matrix>::Ptr mInputVoltage;
+
+
 		/// Previous Input
-        const Attribute<Real>::Ptr mInputPrev;
+        const Attribute<Matrix>::Ptr mInputPrev;
         /// Current Input
-        const Attribute<Real>::Ptr mInputCurr;
+        const Attribute<Matrix>::Ptr mInputCurr;
         /// Previous State
-        const Attribute<Real>::Ptr mStatePrev;
+        const Attribute<Matrix>::Ptr mStatePrev;
         /// Current State
-        const Attribute<Real>::Ptr mStateCurr;
+        const Attribute<Matrix>::Ptr mStateCurr;
         /// Previous Output
-        const Attribute<Real>::Ptr mOutputPrev;
+        const Attribute<Matrix>::Ptr mOutputPrev;
         /// Current Output
-        const Attribute<Real>::Ptr mOutputCurr;
+        const Attribute<Matrix>::Ptr mOutputCurr;
 
 
 
@@ -53,7 +56,7 @@ namespace Signal {
 		/// Setter for integration step parameter
 		void setParameters(Real K_p);
 		/// Setter for initial values
-        void setInitialValues(Real input_init, Real state_init, Real output_init);
+        void setInitialValues(Matrix input_init, Matrix state_init, Matrix output_init);
 		/// pre step operations
 		void signalPreStep(Real time, Int timeStepCount);
 		/// step operations

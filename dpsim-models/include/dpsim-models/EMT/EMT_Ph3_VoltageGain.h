@@ -35,7 +35,6 @@ namespace Ph3 {
 		/// Controlled voltage source
 		std::shared_ptr<EMT::Ph3::VoltageSource> mSubCtrledVoltageSource;
 
-
 		// #### solver ####
 		///
 		std::vector<const Matrix*> mRightVectorStamps;
@@ -48,16 +47,23 @@ namespace Ph3 {
 
 		// Control inputs
 		const Attribute<Matrix>::Ptr mVs;
+		const Attribute<Matrix>::Ptr mVcdq;
 		const Attribute<Real>::Ptr mK_p;
+		const Attribute<Real>::Ptr mVcd;
+		const Attribute<Real>::Ptr mVcq;
+		const Attribute<Real>::Ptr mElecActivePower;
+		const Attribute<Real>::Ptr mElecPassivePower;
 
 		// Control outputs
 		/// Voltage as control output after transformation interface
-		const Attribute<Real>::Ptr mGainOutput;
-		const Attribute<Real>::Ptr mGainVoltage;
+		const Attribute<Matrix>::Ptr mGainOutput;
+		const Attribute<Matrix>::Ptr mGainVoltage;
+		const Attribute<Matrix>::Ptr mInputVoltage;
+
 		// input, state and output vector for logging
-		const Attribute<Real>::Ptr mGainInputs;
-		const Attribute<Real>::Ptr mGainStates;
-		const Attribute<Real>::Ptr mGainOutputs;
+		const Attribute<Matrix>::Ptr mGainInputs;
+		const Attribute<Matrix>::Ptr mGainStates;
+		const Attribute<Matrix>::Ptr mGainOutputs;
 
 		/// Defines name amd logging level
 		VoltageGain(String name, Logger::Level logLevel = Logger::Level::off)
@@ -69,9 +75,8 @@ namespace Ph3 {
 		/// Initializes component from power flow data
 		void initializeFromNodesAndTerminals(Real frequency);
 		/// Setter for gengit eral parameters of inverter
-		void setParameters(Real K_p);
-		/// Setter for parameters of control loops
-		void setControllerParameters(Real K_p);
+		void setParameters(Real K_p, Matrix InputVoltage);
+
 
 
 		// #### MNA section ####
@@ -89,6 +94,16 @@ namespace Ph3 {
 		void mnaParentAddPreStepDependencies(AttributeBase::List &prevStepDependencies, AttributeBase::List &attributeDependencies, AttributeBase::List &modifiedAttributes) override;
 		/// Add MNA post step dependencies
 		void mnaParentAddPostStepDependencies(AttributeBase::List &prevStepDependencies, AttributeBase::List &attributeDependencies, AttributeBase::List &modifiedAttributes, Attribute<Matrix>::Ptr &leftVector) override;
+
+		// Transformation Utils
+		Matrix parkTransformPowerInvariant(Real theta, const Matrix &fabc);
+
+		Matrix getParkTransformMatrixPowerInvariant(Real theta);
+
+		Matrix inverseParkTransformPowerInvariant(Real theta, const Matrix &fdq);
+
+		Matrix getInverseParkTransformMatrixPowerInvariant(Real theta);
+
 
 		// #### Control section ####
 		/// Control pre step operations

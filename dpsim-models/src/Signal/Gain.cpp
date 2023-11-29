@@ -13,27 +13,35 @@ using namespace CPS::Signal;
 
 Gain::Gain(String name, Logger::Level logLevel) :
 	SimSignalComp(name, name, logLevel),
-    mInputRef(mAttributes->createDynamic<Real>("input_ref")),
-    /// CHECK: Which of these really need to be attributes?
-    mInputPrev(mAttributes->create<Real>("input_prev")),
-    mStatePrev(mAttributes->create<Real>("state_prev")),
-    mOutputPrev(mAttributes->create<Real>("output_prev")),
-    mInputCurr(mAttributes->create<Real>("input_curr")),
-    mStateCurr(mAttributes->create<Real>("state_curr")),
-    mOutputCurr(mAttributes->create<Real>("output_curr")),
-	mOutputRef(mAttributes->createDynamic<Real>("output_ref")) { }
+
+	// references of input and output
+    mInputRef(mAttributes->createDynamic<Matrix>("input_ref")), // input voltage
+	mOutputRef(mAttributes->createDynamic<Matrix>("output_ref")), // output voltage
+
+
+	// previous states
+    mInputPrev(mAttributes->create<Matrix>("input_prev", Matrix::Zero(2,1))),
+    mStatePrev(mAttributes->create<Matrix>("state_prev", Matrix::Zero(2,1))),
+    mOutputPrev(mAttributes->create<Matrix>("output_prev", Matrix::Zero(2,1))),
+
+	// current states
+    mInputCurr(mAttributes->create<Matrix>("input_curr", Matrix::Zero(2,1))),
+    mStateCurr(mAttributes->create<Matrix>("state_curr", Matrix::Zero(2,1))),
+    mOutputCurr(mAttributes->create<Matrix>("output_curr", Matrix::Zero(2,1)))
+
+	{
+		SPDLOG_LOGGER_INFO(mSLog, "Create {} {}", type(), name);
+	}
 
 void Gain::setParameters(Real K_p) {
-	// Input is Gain parameter K_p
+	// setter for Gain parameter K_p
     mK_p = K_p;
-    SPDLOG_LOGGER_INFO(mSLog, "K_p = {}", mK_p);
 
-	**mInputCurr = mK_p;
-    **mInputRef = mK_p;
+    SPDLOG_LOGGER_INFO(mSLog, "K_p = {}", mK_p);
 }
 
-
-void Gain::setInitialValues(Real input_init, Real state_init, Real output_init) {
+// setter for initial state-space values
+void Gain::setInitialValues(Matrix input_init, Matrix state_init, Matrix output_init) {
 	**mInputCurr = input_init;
     **mStateCurr = state_init;
     **mOutputCurr = output_init;
@@ -62,14 +70,15 @@ void Gain::signalAddStepDependencies(AttributeBase::List &prevStepDependencies, 
 };
 
 void Gain::signalStep(Real time, Int timeStepCount) {
-    **mInputCurr = **mInputRef;
+	// current input is the voltage reference from outside
+	**mInputCurr = **mInputRef;
 
     SPDLOG_LOGGER_INFO(mSLog, "Time {}:", time);
     SPDLOG_LOGGER_INFO(mSLog, "Input values: inputCurr = {}, inputPrev = {}, statePrev = {}", **mInputCurr, **mInputPrev, **mStatePrev);
 
-
+	// output voltage is gain * input voltage
     **mOutputCurr = mK_p * **mInputCurr;
-
+	**mOutputRef = **mOutputCurr;
 
     SPDLOG_LOGGER_INFO(mSLog, "State values: stateCurr = {}", **mStateCurr);
     SPDLOG_LOGGER_INFO(mSLog, "Output values: outputCurr = {}:", **mOutputCurr);

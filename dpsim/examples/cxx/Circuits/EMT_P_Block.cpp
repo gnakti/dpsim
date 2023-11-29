@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
 	auto r1 = EMT::Ph3::Resistor::make("r_1");
 	r1->setParameters(CPS::Math::singlePhaseParameterToThreePhase(5));
 	auto p1 = EMT::Ph3::VoltageGain::make("p_1");
-	p1->setParameters(5);
+	p1->setParameters(5, CPS::Math::singlePhasePowerToThreePhase(100));
 
 	// Topology
 	vs->connect({ n1 });
