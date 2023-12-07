@@ -25,10 +25,10 @@ int main(int argc, char* argv[]) {
 	Logger::setLogDir("logs/" + simNamePF);
 
 	// ----- POWERFLOW FOR INITIALIZATION -----
-	Real timeStepPF = finalTime;
-	Real finalTimePF = finalTime+timeStepPF;
+	//Real timeStepPF = finalTime;
+	//Real finalTimePF = finalTime+timeStepPF;
 
-
+/*
 	// Components
 	auto n1PF = SimNode<Complex>::make("n1", PhaseType::Single);
 	auto n2PF = SimNode<Complex>::make("n2", PhaseType::Single);
@@ -71,34 +71,34 @@ int main(int argc, char* argv[]) {
 	simPF.addLogger(loggerPF);
 	simPF.run();
 
-
+*/
 	// Define simulation scenario
 
 
 	// Nodes
 	auto n1 = SimNode<Real>::make("n1");
-	auto n2 = SimNode<Real>::make("n2");
+
 
 	// Components
-	auto vs = EMT::Ph3::VoltageSource::make("vs");
-	vs->setParameters(CPS::Math::singlePhaseVariableToThreePhase(Complex(10, 0)), 50);
+	//auto vs = EMT::Ph3::VoltageSource::make("vs");
+	//vs->setParameters(CPS::Math::singlePhaseVariableToThreePhase(Complex(10, 0)), 50);
 	auto r1 = EMT::Ph3::Resistor::make("r_1");
 	r1->setParameters(CPS::Math::singlePhaseParameterToThreePhase(5));
 	auto p1 = EMT::Ph3::VoltageGain::make("p_1");
 	p1->setParameters(5);
 
 	// Topology
-	vs->connect({ n1 });
+	//vs->connect({ n1 });
 	p1->connect({ n1 });
-	r1->connect({ n2 });
+	r1->connect({ n1 });
 
 	// Define system topology
-	auto sys = SystemTopology(50, SystemNodeList{n1, n2}, SystemComponentList{vs, r1, p1});
+	auto sys = SystemTopology(50, SystemNodeList{n1}, SystemComponentList{r1, p1});
 
 	// Logger
 	auto logger = DataLogger::make(simName);
 	logger->logAttribute("v1", n1->attribute("v"));
-	logger->logAttribute("v2", n2->attribute("v"));
+	//logger->logAttribute("v2", n2->attribute("v"));
 
 	Simulation sim(simName);
 	sim.setSystem(sys);

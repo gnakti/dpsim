@@ -80,8 +80,6 @@ void EMT::Ph3::VoltageGain::setParameters(Real K_p) {
 	SPDLOG_LOGGER_INFO(mSLog, "K_p = {}", K_p);
 
 	mGain->setParameters(K_p);
-
-	//mK_p = K_p;
 }
 
 
@@ -108,7 +106,7 @@ void EMT::Ph3::VoltageGain::initializeFromNodesAndTerminals(Real frequency) {
 
 
 	// Set Node 0 voltage
-	mVirtualNodes[0]->setInitialVoltage(intfVoltageComplex); // 3x1 Matrix complex
+	//mVirtualNodes[0]->setInitialVoltage(intfVoltageComplex); // 3x1 Matrix complex
 
 
 	// Calculate Powers
@@ -119,8 +117,8 @@ void EMT::Ph3::VoltageGain::initializeFromNodesAndTerminals(Real frequency) {
 	**mElecPassivePower = ( 3./2. * intfVoltageComplex(0,0) *  std::conj( - intfCurrentComplex(0,0)) ).imag();
 
 	// Initialize and connect controlled source
-	mSubCtrledVoltageSource->setParameters(mVirtualNodes[0]->initialVoltage(), frequency); //voltage ref, frequency
-	mSubCtrledVoltageSource->connect({ SimNode::GND, mVirtualNodes[0] });
+	mSubCtrledVoltageSource->setParameters(intfVoltageComplex, frequency); //voltage ref, frequency
+	mSubCtrledVoltageSource->connect({ SimNode::GND, terminal(0)->node() }); // terminal: direct connection, virtualnode: intern connections
 
 
 	// Initialize gain controller
@@ -136,7 +134,7 @@ void EMT::Ph3::VoltageGain::initializeFromNodesAndTerminals(Real frequency) {
 	// Initialize control subcomponents
 	// voltage input for gain controller
 	//Matrix ircdq;
-	Real theta = std::arg(mVirtualNodes[0]->initialSingleVoltage());
+	Real theta = std::arg(intfVoltageComplex(0,0));
 	**mVcdq = parkTransformPowerInvariant(theta, intfVoltageComplex.real());
 	//ircdq = parkTransformPowerInvariant(theta, -1 * filterInterfaceInitialCurrent.real());
 
