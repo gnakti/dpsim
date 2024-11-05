@@ -93,7 +93,7 @@ namespace Ph3 {
 		const Attribute<Real>::Ptr mIrcq;
 
 		const Attribute<Real>::Ptr mElecActivePower;
-		const Attribute<Real>::Ptr mElecPassivePower;
+		const Attribute<Real>::Ptr mElecReactivePower;
 
 		// Control outputs
 		/// Voltage as control output after transformation interface

@@ -22,7 +22,7 @@ DP::Ph1::VSIVoltageControlDQ::VSIVoltageControlDQ(String uid, String name, Logge
 	mIrcd(mAttributes->create<Real>("Irc_d", 0)),
 	mIrcq(mAttributes->create<Real>("Irc_q", 0)),
 	mElecActivePower(mAttributes->create<Real>("P_elec", 0)),
-	mElecPassivePower(mAttributes->create<Real>("Q_elec", 0)),
+	mElecReactivePower(mAttributes->create<Real>("Q_elec", 0)),
 	mVsref(mAttributes->create<MatrixComp>("Vsref", MatrixComp::Zero(1,1))),
 	mVs(mAttributes->createDynamic<MatrixComp>("Vs")),
 	mDroopOutput(mAttributes->createDynamic<Real>("droop_output")),
@@ -94,21 +94,21 @@ DP::Ph1::VSIVoltageControlDQ::VSIVoltageControlDQ(String uid, String name, Logge
 }
 
 //setter target voltage and power
-void DP::Ph1::VSIVoltageControlDQ::setParameters(Real Omega, Real VdRef, Real VqRef, Real Pref) {
+void DP::Ph1::VSIVoltageControlDQ::setParameters(Real Omega, Real VdRef, Real VqRef, Real PRef) {
 	mParametersSet = true;
 
 	SPDLOG_LOGGER_INFO(mSLog,"General Parameters:");
 	SPDLOG_LOGGER_INFO(mSLog,"Nominal Omega={} [1/s]", Omega);
-	SPDLOG_LOGGER_INFO(mSLog,"VdRef={} [V] VqRef={} [V]", VdRef, VqRef);
+	SPDLOG_LOGGER_INFO(mSLog,"VdRef={} [V] VqRef={} [V] PRef={} [W]", VdRef, VqRef, PRef);
 
 	mVoltageControllerVSI->setParameters(VdRef, VqRef);
 	mVCO->setParameters(Omega);
-	mDroop->setParameters(Pref, Omega);
+	mDroop->setParameters(PRef, Omega);
 
 	**mOmegaN = Omega;
 	**mVdRef = VdRef;
 	**mVqRef = VqRef;
-	**mPRef= Pref;
+	**mPRef= PRef;
 
 }
 
@@ -352,13 +352,13 @@ void DP::Ph1::VSIVoltageControlDQ::controlStep(Real time, Int timeStepCount) {
 	if(mWithConnectionTransformer)
 	{
 		// TODO: use DPDQ interface!!!
-		vcdq = Math::rotatingFrame2to1(mVirtualNodes[3]->singleVoltage(), (**mVCO->mOutputPrev)(0,0), 0);
-		ircdq = Math::rotatingFrame2to1(-1. * (**mSubResistorC->mIntfCurrent)(0, 0), (**mVCO->mOutputPrev)(0,0), 0);
+		vcdq = Math::rotatingFrame2to1(mVirtualNodes[3]->singleVoltage(), (**mVCO->mOutputPrev)(0,0), mThetaN);
+		ircdq = Math::rotatingFrame2to1(-1. * (**mSubResistorC->mIntfCurrent)(0, 0), (**mVCO->mOutputPrev)(0,0), mThetaN);
 	}
 	else{
 		// TODO: use DPDQ interface!!!
-		vcdq = Math::rotatingFrame2to1(mVirtualNodes[2]->singleVoltage(), (**mVCO->mOutputPrev)(0,0), 0);
-		ircdq = Math::rotatingFrame2to1(-1. * (**mSubResistorC->mIntfCurrent)(0, 0), (**mVCO->mOutputPrev)(0,0), 0);
+		vcdq = Math::rotatingFrame2to1(mVirtualNodes[2]->singleVoltage(), (**mVCO->mOutputPrev)(0,0), mThetaN);
+		ircdq = Math::rotatingFrame2to1(-1. * (**mSubResistorC->mIntfCurrent)(0, 0), (**mVCO->mOutputPrev)(0,0), mThetaN);
 	
 	}
 
@@ -373,10 +373,8 @@ void DP::Ph1::VSIVoltageControlDQ::controlStep(Real time, Int timeStepCount) {
 	mVoltageControllerVSI->signalStep(time, timeStepCount);
 
 	// Transformation interface backward
-	// (**mVsref)(0,0) = Math::rotatingFrame2to1(Complex(mVoltageControllerVSI->attributeTyped<Matrix>("output_curr")->get()(0, 0), mVoltageControllerVSI->attributeTyped<Matrix>("output_curr")->get()(1, 0)), mThetaN, (**mVCO->mOutputPrev)(0,0));
 	// TODO: use DPDQ interface!!!
-	(**mVsref)(0,0) = Math::rotatingFrame2to1(Complex(mVoltageControllerVSI->attributeTyped<Matrix>("output_curr")->get()(0, 0), mVoltageControllerVSI->attributeTyped<Matrix>("output_curr")->get()(1, 0)), 0, (**mVCO->mOutputCurr)(0,0));
-
+	(**mVsref)(0,0) = Math::rotatingFrame2to1(Complex(mVoltageControllerVSI->attributeTyped<Matrix>("output_curr")->get()(0, 0), mVoltageControllerVSI->attributeTyped<Matrix>("output_curr")->get()(1, 0)), mThetaN, (**mVCO->mOutputPrev)(0,0));
 
 	// Update nominal system angle
 	mThetaN = mThetaN + mTimeStep * **mOmegaN;

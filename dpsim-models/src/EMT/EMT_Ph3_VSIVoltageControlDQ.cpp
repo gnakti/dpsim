@@ -22,7 +22,7 @@ EMT::Ph3::VSIVoltageControlDQ::VSIVoltageControlDQ(String uid, String name, Logg
 	mIrcd(mAttributes->create<Real>("Irc_d", 0)),
 	mIrcq(mAttributes->create<Real>("Irc_q", 0)),
 	mElecActivePower(mAttributes->create<Real>("P_elec", 0)),
-	mElecPassivePower(mAttributes->create<Real>("Q_elec", 0)),
+	mElecReactivePower(mAttributes->create<Real>("Q_elec", 0)),
 	mVsref(mAttributes->create<Matrix>("Vsref", Matrix::Zero(3,1))),
 	mVs(mAttributes->createDynamic<Matrix>("Vs")),
 	mDroopOutput(mAttributes->createDynamic<Real>("droop_output")),
@@ -217,7 +217,7 @@ void EMT::Ph3::VSIVoltageControlDQ::initializeFromNodesAndTerminals(Real frequen
 	**mIntfVoltage = intfVoltageComplex.real();
 	**mIntfCurrent = intfCurrentComplex.real();
 	**mElecActivePower = ( 3./2. * intfVoltageComplex(0,0) *  std::conj( - intfCurrentComplex(0,0)) ).real();
-	**mElecPassivePower = ( 3./2. * intfVoltageComplex(0,0) *  std::conj( - intfCurrentComplex(0,0)) ).imag();
+	**mElecReactivePower = ( 3./2. * intfVoltageComplex(0,0) *  std::conj( - intfCurrentComplex(0,0)) ).imag();
 
 	// Initialize controlled source
 	mSubCtrledVoltageSource->setParameters(mVirtualNodes[0]->initialVoltage(), 0.0);
@@ -415,7 +415,7 @@ void EMT::Ph3::VSIVoltageControlDQ::controlStep(Real time, Int timeStepCount) {
 
 	//calculation of system power
 	**mElecActivePower = - 1. * (intfVoltageDQ(0, 0)*intfCurrentDQ(0, 0) + intfVoltageDQ(1, 0)*intfCurrentDQ(1, 0));
-	**mElecPassivePower = - 1. * (intfVoltageDQ(1, 0)*intfCurrentDQ(0, 0) - intfVoltageDQ(0, 0)*intfCurrentDQ(1, 0));
+	**mElecReactivePower = - 1. * (intfVoltageDQ(1, 0)*intfCurrentDQ(0, 0) - intfVoltageDQ(0, 0)*intfCurrentDQ(1, 0));
 
 	//vector of voltages
 	**mVcd = vcdq(0, 0);
