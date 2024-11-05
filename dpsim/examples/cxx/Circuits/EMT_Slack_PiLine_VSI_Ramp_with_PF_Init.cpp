@@ -6,8 +6,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  *********************************************************************************/
 
-#include "../Examples.h"
 #include <DPsim.h>
+#include "../Examples.h"
 
 using namespace DPsim;
 using namespace CPS;
@@ -151,7 +151,7 @@ int main(int argc, char *argv[]) {
                                   SystemComponentList{extnetEMT, lineEMT, pv});
 
   // Initialization of dynamic topology
-  systemEMT.initWithPowerflow(systemPF, CPS::Domain::EMT);
+  systemEMT.initWithPowerflow(systemPF, Domain::EMT);
 
   // Logging
   auto loggerEMT = DataLogger::make(simName);

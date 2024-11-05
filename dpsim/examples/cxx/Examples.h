@@ -533,10 +533,6 @@ struct ScenarioConfig {
   Real systemOmega = 2 * PI * systemFrequency;
 };
 } // namespace SGIB
-        // Further parameters
-        Real systemOmega = 2 * PI * systemFrequency;
-    };
-}
 namespace GridForming {
 
     struct ScenarioConfig1 {
