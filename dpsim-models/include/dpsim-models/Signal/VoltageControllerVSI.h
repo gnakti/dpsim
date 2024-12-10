@@ -86,7 +86,7 @@ namespace Signal {
 		VoltageControllerVSI(String name, Logger::Level logLevel = Logger::Level::off);
 
 		/// Setter for general parameters
-		void setParameters(Real VampRef, Real OmegaRef);
+		void setParameters(Real VdRef, Real VqRef);
 		/// Setter for parameters of control loops
 		void setControllerParameters(Real Kp_voltageCtrl, Real Ki_voltageCtrl, Real Kp_currCtrl, Real Ki_currCtrl, Real Kp_pll, Real Ki_pll, Real Omega_cutoff);
 		// Setter VCO Version
