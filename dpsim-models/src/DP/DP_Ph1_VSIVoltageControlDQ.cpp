@@ -228,7 +228,7 @@ void DP::Ph1::VSIVoltageControlDQ::initializeFromNodesAndTerminals(Real frequenc
 		Real theta = std::arg(mVirtualNodes[3]->initialSingleVoltage());
 		// TODO: use DPDQ interface!!!
 		vcdq = Math::rotatingFrame2to1(mVirtualNodes[3]->initialSingleVoltage(), theta, 0);
-		ircdq = Math::rotatingFrame2to1(-1. * (**mSubResistorC->mIntfCurrent)(0, 0), theta, 0);
+		ircdq = Math::rotatingFrame2to1(-1. * (**mSubResistorF->mIntfCurrent)(0, 0), theta, 0);
 
 		**mVcd = vcdq.real();
 		**mVcq = vcdq.imag();
@@ -260,7 +260,7 @@ void DP::Ph1::VSIVoltageControlDQ::initializeFromNodesAndTerminals(Real frequenc
 		Real theta = std::arg(mVirtualNodes[2]->initialSingleVoltage());
 		// TODO: use DPDQ interface!!!
 		vcdq = Math::rotatingFrame2to1(mVirtualNodes[2]->initialSingleVoltage(), theta, 0);
-		ircdq = Math::rotatingFrame2to1(-1. * (**mSubResistorC->mIntfCurrent)(0, 0), theta, 0);
+		ircdq = Math::rotatingFrame2to1(-1. * (**mSubResistorF->mIntfCurrent)(0, 0), theta, 0);
 
 		**mVcd = vcdq.real();
 		**mVcq = vcdq.imag();
@@ -353,12 +353,12 @@ void DP::Ph1::VSIVoltageControlDQ::controlStep(Real time, Int timeStepCount) {
 	{
 		// TODO: use DPDQ interface!!!
 		vcdq = Math::rotatingFrame2to1(mVirtualNodes[3]->singleVoltage(), (**mVCO->mOutputPrev)(0,0), mThetaN);
-		ircdq = Math::rotatingFrame2to1(-1. * (**mSubResistorC->mIntfCurrent)(0, 0), (**mVCO->mOutputPrev)(0,0), mThetaN);
+		ircdq = Math::rotatingFrame2to1(-1. * (**mSubResistorF->mIntfCurrent)(0, 0), (**mVCO->mOutputPrev)(0,0), mThetaN);
 	}
 	else{
 		// TODO: use DPDQ interface!!!
 		vcdq = Math::rotatingFrame2to1(mVirtualNodes[2]->singleVoltage(), (**mVCO->mOutputPrev)(0,0), mThetaN);
-		ircdq = Math::rotatingFrame2to1(-1. * (**mSubResistorC->mIntfCurrent)(0, 0), (**mVCO->mOutputPrev)(0,0), mThetaN);
+		ircdq = Math::rotatingFrame2to1(-1. * (**mSubResistorF->mIntfCurrent)(0, 0), (**mVCO->mOutputPrev)(0,0), mThetaN);
 	
 	}
 
