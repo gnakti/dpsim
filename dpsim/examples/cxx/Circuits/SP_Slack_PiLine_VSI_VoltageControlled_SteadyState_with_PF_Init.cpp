@@ -14,11 +14,11 @@ using namespace CPS;
 
 int main(int argc, char* argv[]) {
 
-	// CIM::Examples::Grids::GridForming::ScenarioConfig1 scenario;
-	CIM::Examples::Grids::GridForming::Yazdani scenario;
+	CIM::Examples::Grids::GridForming::ScenarioConfig1 scenario;
+	// CIM::Examples::Grids::GridForming::Yazdani scenario;
 
 	Real finalTime = 2;
-	Real timeStep = 0.0001;
+	Real timeStep = 0.00001;
 	String simName = "SP_Slack_PiLine_VSI_VoltageControlled_SteadyState_with_PF_Init";
 	Bool pvWithControl = true;
 
@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
 	extnetPF->modifyPowerFlowBusType(PowerflowBusType::VD);
 	
 	auto linePF = SP::Ph1::PiLine::make("PiLine", Logger::Level::debug);
-	linePF->setParameters(scenario.lineResistance, 0, 0, 0);
+    linePF->setParameters(scenario.lineResistance, scenario.lineInductance, scenario.lineCapacitance, scenario.lineConductance);
 	linePF->setBaseVoltage(scenario.systemNominalVoltage);
 
 	Complex load1_s=3*std::pow(scenario.systemNominalVoltage, 2)/(Complex(scenario.loadRes1, scenario.loadInd1*scenario.systemNominalOmega));
@@ -49,10 +49,6 @@ int main(int argc, char* argv[]) {
 	auto loadPF = SP::Ph1::Load::make("Load", Logger::Level::debug);
 	loadPF->setParameters(loadActivePower, loadReactivePower, scenario.systemNominalVoltage);
 	loadPF->modifyPowerFlowBusType(PowerflowBusType::PQ);
-
-	// auto loadPF = SP::Ph1::Load::make("Load", Logger::Level::debug);
-	// loadPF->setParameters(scenario.loadActivePower, scenario.loadReactivePower, scenario.systemNominalVoltage);
-	// loadPF->modifyPowerFlowBusType(PowerflowBusType::PQ);
 
 	// Topology
 	extnetPF->connect({ n1PF });
@@ -95,14 +91,11 @@ int main(int argc, char* argv[]) {
 	loadSP->setParameters(loadActivePower, loadReactivePower, scenario.systemNominalVoltage);
 
 	auto pv = SP::Ph1::VSIVoltageControlDQ::make("pv", "pv", Logger::Level::debug, false);
-	pv->setParameters(scenario.systemNominalOmega, scenario.Vdref, scenario.Vqref);
-	pv->setControllerParameters(scenario.KpVoltageCtrl, scenario.KiVoltageCtrl, scenario.KpCurrCtrl, scenario.KiCurrCtrl, scenario.systemNominalOmega);
+	pv->setParameters(scenario.systemNominalOmega, scenario.Vdref, scenario.Vqref, scenario.Pref);
+	pv->setControllerParameters(scenario.KpVoltageCtrl, scenario.KiVoltageCtrl, scenario.KpCurrCtrl, scenario.KiCurrCtrl, scenario.systemNominalOmega, scenario.m_p, scenario.tau_p, scenario.tau_l);
 	pv->setFilterParameters(scenario.Lf, scenario.Cf, scenario.Rf, scenario.Rc);
 	pv->setInitialStateValues(scenario.phi_dInit, scenario.phi_qInit, scenario.gamma_dInit, scenario.gamma_qInit);
 	pv->withControl(pvWithControl);
-
-	// auto lineSP = SP::Ph1::PiLine::make("PiLine", Logger::Level::debug);
-	// lineSP->setParameters(scenario.lineResistance, scenario.lineInductance, 0, 0);
 
 	auto lineSP = SP::Ph1::Resistor::make("Line", Logger::Level::debug);
 	lineSP->setParameters(scenario.lineResistance);
@@ -113,8 +106,8 @@ int main(int argc, char* argv[]) {
 	loadSP->connect({n2SP});
 
 	auto systemSP = SystemTopology(scenario.systemNominalFreq,
-			SystemNodeList{n1SP, n2SP},
-			SystemComponentList{loadSP, lineSP, pv});
+		SystemNodeList{n1SP, n2SP},
+		SystemComponentList{loadSP, lineSP, pv});
 
 	// Initialization of dynamic topology
 	systemSP.initWithPowerflow(systemPF, Domain::SP);
@@ -124,10 +117,10 @@ int main(int argc, char* argv[]) {
 
 	// Logging
 	auto loggerSP = DataLogger::make(simNameSP);
-    loggerSP->logAttribute("Controlled_source_PV", pv->attribute("Isref"));
+	loggerSP->logAttribute("Controlled_source_PV", pv->attribute("Vs"));
 	loggerSP->logAttribute("Voltage_terminal_PV", n1SP->attribute("v"));
 	loggerSP->logAttribute("Voltage_PCC", n2SP->attribute("v"));
-	loggerSP->logAttribute("Strom_RLC", pv->attribute("i_intf"));
+	loggerSP->logAttribute("Current_terminal_PV", pv->attribute("i_intf"));
 	loggerSP->logAttribute("VCO_output", pv->attribute("vco_output"));
 	loggerSP->logAttribute("P_elec", pv->attribute("P_elec"));
 	loggerSP->logAttribute("Q_elec", pv->attribute("Q_elec"));
