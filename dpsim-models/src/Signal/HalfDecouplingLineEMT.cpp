@@ -29,11 +29,10 @@ HalfDecouplingLineEMT::HalfDecouplingLineEMT(String name, Logger::Level logLevel
 void HalfDecouplingLineEMT::setParameters(SimNode<Real>::Ptr node1,
                                       SimNode<Real>::Ptr node2, Real resistance,
                                       Real inductance, Real capacitance, 
-                                      Attribute<Real> coupledVoltage,
-                                      Attribute<Real> coupledCurrent) {
+                                      HalfDecouplingLineEMT::Ptr couplingHalfLine) {
 
-  mCoupledVoltage->setReference(coupledVoltage);
-  mCoupledCurrent->setReference(coupledCurrent);
+  mCoupledVoltage->setReference(couplingHalfLine->mVolt);
+  mCoupledCurrent->setReference(couplingHalfLine->mCur);
 
   mResistance = resistance;
   mInductance = inductance;
@@ -91,13 +90,13 @@ void HalfDecouplingLineEMT::step(Real time, Int timeStepCount) {
 
   if (timeStepCount == 0) {
     // initialization
-    **mSrcCurRef = mCur - mVolt / (mSurgeImpedance + mResistance / 4);
+    **mSrcCurRef = **mCur - **mVolt / (mSurgeImpedance + mResistance / 4);
   } else {
     // Update currents
     **mSrcCurRef = -mSurgeImpedance / denom *
-                        (mCoupledVoltage + (mSurgeImpedance - mResistance / 4) * mCoupledCurrent) -
+                        (**mCoupledVoltage + (mSurgeImpedance - mResistance / 4) * **mCoupledCurrent) -
                     mResistance / 4 / denom *
-                        (mVolt + (mSurgeImpedance - mResistance / 4) * mCur);
+                        (**mVolt + (mSurgeImpedance - mResistance / 4) * **mCur);
   }
   mSrcCur->set(**mSrcCurRef);
 }

@@ -17,8 +17,8 @@
 
 namespace CPS {
 namespace Signal {
-class DecouplingLineEMT : public SimSignalComp,
-                          public SharedFactory<DecouplingLineEMT> {
+class HalfDecouplingLineEMT : public SimSignalComp,
+                          public SharedFactory<HalfDecouplingLineEMT> {
 protected:
   Real mDelay;
   Real mResistance;
@@ -41,7 +41,7 @@ protected:
   Real interpolate(std::vector<Real> &data);
 
 public:
-  typedef std::shared_ptr<DecouplingLineEMT> Ptr;
+  typedef std::shared_ptr<HalfDecouplingLineEMT> Ptr;
 
   const Attribute<Real>::Ptr mSrcCurRef;
   const Attribute<Real>::Ptr mVolt;
@@ -52,10 +52,11 @@ public:
   ///FIXME: workaround for dependency analysis as long as the states aren't attributes
   const Attribute<Matrix>::Ptr mStates;
 
-  DecouplingLineEMT(String name, Logger::Level logLevel = Logger::Level::info);
+  HalfDecouplingLineEMT(String name, Logger::Level logLevel = Logger::Level::info);
 
   void setParameters(SimNode<Real>::Ptr node1, SimNode<Real>::Ptr node2,
-                     Real resistance, Real inductance, Real capacitance);
+                     Real resistance, Real inductance, Real capacitance,
+                     HalfDecouplingLineEMT::Ptr couplingHalfLine);
   void initialize(Real omega, Real timeStep);
   void step(Real time, Int timeStepCount);
   void postStep();
@@ -64,34 +65,31 @@ public:
 
   class PreStep : public Task {
   public:
-    PreStep(DecouplingLineEMT &line)
+    PreStep(HalfDecouplingLineEMT &line)
         : Task(**line.mName + ".MnaPreStep"), mLine(line) {
       mPrevStepDependencies.push_back(mLine.mStates);
-      mModifiedAttributes.push_back(mLine.mSrc1->mCurrentRef);
-      mModifiedAttributes.push_back(mLine.mSrc2->mCurrentRef);
+      mModifiedAttributes.push_back(mLine.mSrc->mCurrentRef);
     }
 
     void execute(Real time, Int timeStepCount);
 
   private:
-    DecouplingLineEMT &mLine;
+    HalfDecouplingLineEMT &mLine;
   };
 
   class PostStep : public Task {
   public:
-    PostStep(DecouplingLineEMT &line)
+    PostStep(HalfDecouplingLineEMT &line)
         : Task(**line.mName + ".PostStep"), mLine(line) {
-      mAttributeDependencies.push_back(mLine.mRes1->mIntfVoltage);
-      mAttributeDependencies.push_back(mLine.mRes1->mIntfCurrent);
-      mAttributeDependencies.push_back(mLine.mRes2->mIntfVoltage);
-      mAttributeDependencies.push_back(mLine.mRes2->mIntfCurrent);
+      mAttributeDependencies.push_back(mLine.mRes->mIntfVoltage);
+      mAttributeDependencies.push_back(mLine.mRes->mIntfCurrent);
       mModifiedAttributes.push_back(mLine.mStates);
     }
 
     void execute(Real time, Int timeStepCount);
 
   private:
-    DecouplingLineEMT &mLine;
+    HalfDecouplingLineEMT &mLine;
   };
 };
 } // namespace Signal
