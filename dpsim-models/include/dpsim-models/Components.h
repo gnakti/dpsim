@@ -124,6 +124,7 @@
 #include <dpsim-models/EMT/EMT_Ph3_SynchronGeneratorTrStab.h>
 #include <dpsim-models/EMT/EMT_Ph3_SynchronGeneratorVBR.h>
 #include <dpsim-models/EMT/EMT_Ph3_Transformer.h>
+#include <dpsim-models/EMT/EMT_Ph3_HalfDecouplingLine.h>
 
 #include <dpsim-models/Signal/CosineFMGenerator.h>
 #include <dpsim-models/Signal/DecouplingLine.h>
