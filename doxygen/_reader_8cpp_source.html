@@ -410,17 +410,17 @@ $(function() {
 <div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;                                                mComponentLogLevel);</div>
 <div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160; </div>
 <div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;    <span class="comment">// TODO: Use EnergyConsumer.P and EnergyConsumer.Q if available, overwrite if existent SvPowerFlow data</span></div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;    <span class="comment">/*</span></div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;<span class="comment">        Real p = 0;</span></div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;<span class="comment">        Real q = 0;</span></div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;<span class="comment">        if (consumer-&gt;p.value){</span></div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;<span class="comment">            p = unitValue(consumer-&gt;p.value,UnitMultiplier::M);</span></div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;<span class="comment">        }</span></div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;<span class="comment">        if (consumer-&gt;q.value){</span></div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;<span class="comment">            q = unitValue(consumer-&gt;q.value,UnitMultiplier::M);</span></div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;<span class="comment">        }</span></div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;<span class="comment">        load-&gt;setParameters(p, q, 0);</span></div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;<span class="comment">        */</span></div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;<span class="preprocessor">#if 0</span></div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;    Real p = 0;</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;    Real q = 0;</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    <span class="keywordflow">if</span> (consumer-&gt;p.value){</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;      p = unitValue(consumer-&gt;p.value,UnitMultiplier::M);</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;    }</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;    <span class="keywordflow">if</span> (consumer-&gt;q.value){</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;      q = unitValue(consumer-&gt;q.value,UnitMultiplier::M);</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    }</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;    load-&gt;setParameters(p, q, 0);</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160; </div>
 <div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;    <span class="comment">// P and Q values will be set according to SvPowerFlow data</span></div>
 <div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;    load-&gt;modifyPowerFlowBusType(</div>
@@ -1258,24 +1258,25 @@ $(function() {
 <div class="line"><a name="l01190"></a><span class="lineno"> 1190</span>&#160; </div>
 <div class="line"><a name="l01191"></a><span class="lineno"> 1191</span>&#160;      <span class="keyword">auto</span> pfEquipment = mPowerflowEquipment.at(equipment-&gt;mRID);</div>
 <div class="line"><a name="l01192"></a><span class="lineno"> 1192</span>&#160;      <span class="keywordflow">if</span> (pfEquipment == <span class="keyword">nullptr</span>) {</div>
-<div class="line"><a name="l01193"></a><span class="lineno"> 1193</span>&#160;        SPDLOG_LOGGER_ERROR(mSLog, <span class="stringliteral">&quot;Equipment {} is null in equipment list&quot;</span>, equipment-&gt;mRID);</div>
-<div class="line"><a name="l01194"></a><span class="lineno"> 1194</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="class_c_p_s_1_1_system_error.html">SystemError</a>(<span class="stringliteral">&quot;Equipment is null in equipment list.&quot;</span>);</div>
-<div class="line"><a name="l01195"></a><span class="lineno"> 1195</span>&#160;      }</div>
-<div class="line"><a name="l01196"></a><span class="lineno"> 1196</span>&#160;      std::dynamic_pointer_cast&lt;SimPowerComp&lt;VarType&gt;&gt;(pfEquipment)</div>
-<div class="line"><a name="l01197"></a><span class="lineno"> 1197</span>&#160;          -&gt;setTerminalAt(std::dynamic_pointer_cast&lt;<a class="code" href="class_c_p_s_1_1_sim_terminal.html">SimTerminal&lt;VarType&gt;</a>&gt;(</div>
-<div class="line"><a name="l01198"></a><span class="lineno"> 1198</span>&#160;                              mPowerflowTerminals[term-&gt;mRID]),</div>
-<div class="line"><a name="l01199"></a><span class="lineno"> 1199</span>&#160;                          term-&gt;sequenceNumber - 1);</div>
-<div class="line"><a name="l01200"></a><span class="lineno"> 1200</span>&#160; </div>
-<div class="line"><a name="l01201"></a><span class="lineno"> 1201</span>&#160;      SPDLOG_LOGGER_INFO(mSLog, <span class="stringliteral">&quot;        Added Terminal {} to Equipment {}&quot;</span>,</div>
-<div class="line"><a name="l01202"></a><span class="lineno"> 1202</span>&#160;                         term-&gt;mRID, equipment-&gt;mRID);</div>
-<div class="line"><a name="l01203"></a><span class="lineno"> 1203</span>&#160;    }</div>
-<div class="line"><a name="l01204"></a><span class="lineno"> 1204</span>&#160;  }</div>
-<div class="line"><a name="l01205"></a><span class="lineno"> 1205</span>&#160;}</div>
-<div class="line"><a name="l01206"></a><span class="lineno"> 1206</span>&#160; </div>
-<div class="line"><a name="l01207"></a><span class="lineno"> 1207</span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l01208"></a><span class="lineno"> 1208</span>&#160;Reader::processTopologicalNode&lt;Real&gt;(CIMPP::TopologicalNode *topNode);</div>
-<div class="line"><a name="l01209"></a><span class="lineno"> 1209</span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l01210"></a><span class="lineno"> 1210</span>&#160;Reader::processTopologicalNode&lt;Complex&gt;(CIMPP::TopologicalNode *topNode);</div>
+<div class="line"><a name="l01193"></a><span class="lineno"> 1193</span>&#160;        SPDLOG_LOGGER_ERROR(mSLog, <span class="stringliteral">&quot;Equipment {} is null in equipment list&quot;</span>,</div>
+<div class="line"><a name="l01194"></a><span class="lineno"> 1194</span>&#160;                            equipment-&gt;mRID);</div>
+<div class="line"><a name="l01195"></a><span class="lineno"> 1195</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="class_c_p_s_1_1_system_error.html">SystemError</a>(<span class="stringliteral">&quot;Equipment is null in equipment list.&quot;</span>);</div>
+<div class="line"><a name="l01196"></a><span class="lineno"> 1196</span>&#160;      }</div>
+<div class="line"><a name="l01197"></a><span class="lineno"> 1197</span>&#160;      std::dynamic_pointer_cast&lt;SimPowerComp&lt;VarType&gt;&gt;(pfEquipment)</div>
+<div class="line"><a name="l01198"></a><span class="lineno"> 1198</span>&#160;          -&gt;setTerminalAt(std::dynamic_pointer_cast&lt;<a class="code" href="class_c_p_s_1_1_sim_terminal.html">SimTerminal&lt;VarType&gt;</a>&gt;(</div>
+<div class="line"><a name="l01199"></a><span class="lineno"> 1199</span>&#160;                              mPowerflowTerminals[term-&gt;mRID]),</div>
+<div class="line"><a name="l01200"></a><span class="lineno"> 1200</span>&#160;                          term-&gt;sequenceNumber - 1);</div>
+<div class="line"><a name="l01201"></a><span class="lineno"> 1201</span>&#160; </div>
+<div class="line"><a name="l01202"></a><span class="lineno"> 1202</span>&#160;      SPDLOG_LOGGER_INFO(mSLog, <span class="stringliteral">&quot;        Added Terminal {} to Equipment {}&quot;</span>,</div>
+<div class="line"><a name="l01203"></a><span class="lineno"> 1203</span>&#160;                         term-&gt;mRID, equipment-&gt;mRID);</div>
+<div class="line"><a name="l01204"></a><span class="lineno"> 1204</span>&#160;    }</div>
+<div class="line"><a name="l01205"></a><span class="lineno"> 1205</span>&#160;  }</div>
+<div class="line"><a name="l01206"></a><span class="lineno"> 1206</span>&#160;}</div>
+<div class="line"><a name="l01207"></a><span class="lineno"> 1207</span>&#160; </div>
+<div class="line"><a name="l01208"></a><span class="lineno"> 1208</span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l01209"></a><span class="lineno"> 1209</span>&#160;Reader::processTopologicalNode&lt;Real&gt;(CIMPP::TopologicalNode *topNode);</div>
+<div class="line"><a name="l01210"></a><span class="lineno"> 1210</span>&#160;<span class="keyword">template</span> <span class="keywordtype">void</span></div>
+<div class="line"><a name="l01211"></a><span class="lineno"> 1211</span>&#160;Reader::processTopologicalNode&lt;Complex&gt;(CIMPP::TopologicalNode *topNode);</div>
 <div class="ttc" id="aclass_c_p_s_1_1_c_i_m_1_1_invalid_topology_html"><div class="ttname"><a href="class_c_p_s_1_1_c_i_m_1_1_invalid_topology.html">CPS::CIM::InvalidTopology</a></div><div class="ttdef"><b>Definition:</b> <a href="_reader_8h_source.html#l00057">Reader.h:57</a></div></div>
 <div class="ttc" id="aclass_c_p_s_1_1_c_i_m_1_1_reader_html_a276f3231f7e53c32713e51817f51ddc9"><div class="ttname"><a href="class_c_p_s_1_1_c_i_m_1_1_reader.html#a276f3231f7e53c32713e51817f51ddc9">CPS::CIM::Reader::setShuntConductance</a></div><div class="ttdeci">void setShuntConductance(Real v)</div><div class="ttdoc">set shunt conductance value</div><div class="ttdef"><b>Definition:</b> <a href="_reader_8cpp_source.html#l00050">Reader.cpp:50</a></div></div>
 <div class="ttc" id="aclass_c_p_s_1_1_c_i_m_1_1_reader_html_a450d6c419d1fc7845d5b402ab2094ce7"><div class="ttname"><a href="class_c_p_s_1_1_c_i_m_1_1_reader.html#a450d6c419d1fc7845d5b402ab2094ce7">CPS::CIM::Reader::loadCIM</a></div><div class="ttdeci">SystemTopology loadCIM(Real systemFrequency, const fs::path &amp;filename, Domain domain=Domain::DP, PhaseType phase=PhaseType::Single, GeneratorType genType=GeneratorType::None)</div><div class="ttdoc">Parses data from CIM files into the CPS data structure.</div><div class="ttdef"><b>Definition:</b> <a href="_reader_8cpp_source.html#l00209">Reader.cpp:209</a></div></div>
@@ -1286,7 +1287,7 @@ $(function() {
 <div class="ttc" id="aclass_c_p_s_1_1_sim_node_html"><div class="ttname"><a href="class_c_p_s_1_1_sim_node.html">CPS::SimNode</a></div><div class="ttdef"><b>Definition:</b> <a href="_sim_node_8h_source.html#l00017">SimNode.h:19</a></div></div>
 <div class="ttc" id="aclass_c_p_s_1_1_sim_power_comp_html"><div class="ttname"><a href="class_c_p_s_1_1_sim_power_comp.html">CPS::SimPowerComp</a></div><div class="ttdoc">Base class for all components that are transmitting power.</div><div class="ttdef"><b>Definition:</b> <a href="_sim_power_comp_8h_source.html#l00017">SimPowerComp.h:17</a></div></div>
 <div class="ttc" id="aclass_c_p_s_1_1_sim_terminal_html"><div class="ttname"><a href="class_c_p_s_1_1_sim_terminal.html">CPS::SimTerminal</a></div><div class="ttdef"><b>Definition:</b> <a href="_sim_terminal_8h_source.html#l00017">SimTerminal.h:18</a></div></div>
-<div class="ttc" id="aclass_c_p_s_1_1_system_error_html"><div class="ttname"><a href="class_c_p_s_1_1_system_error.html">CPS::SystemError</a></div><div class="ttdef"><b>Definition:</b> <a href="dpsim-models_2include_2dpsim-models_2_definitions_8h_source.html#l00143">Definitions.h:143</a></div></div>
+<div class="ttc" id="aclass_c_p_s_1_1_system_error_html"><div class="ttname"><a href="class_c_p_s_1_1_system_error.html">CPS::SystemError</a></div><div class="ttdef"><b>Definition:</b> <a href="dpsim-models_2include_2dpsim-models_2_definitions_8h_source.html#l00141">Definitions.h:141</a></div></div>
 <div class="ttc" id="aclass_c_p_s_1_1_system_topology_html"><div class="ttname"><a href="class_c_p_s_1_1_system_topology.html">CPS::SystemTopology</a></div><div class="ttdef"><b>Definition:</b> <a href="_system_topology_8h_source.html#l00023">SystemTopology.h:23</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
